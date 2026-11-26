@@ -13,11 +13,11 @@ describe('skill progress', () => {
   });
 
   it('shows a saved level and XP even when a calculator is planned', () => {
-    expect(Object.hasOwn(skillCalculators, 'Smithing')).toBe(false);
-    expect(skillProgress([{ name: 'Smithing', level: 2, xp: 174 }], 'Smithing')).toEqual({
+    expect(Object.hasOwn(skillCalculators, 'Attack')).toBe(false);
+    expect(skillProgress([{ name: 'Attack', level: 2, xp: 174 }], 'Attack')).toEqual({
       level: 2, xp: 174, progressPercent: 100, xpToNext: 0,
     });
-    expect(skillProgress([], 'Smithing')).toBeNull();
+    expect(skillProgress([], 'Attack')).toBeNull();
   });
 
   it('has no next-level target at the supported level cap', () => {

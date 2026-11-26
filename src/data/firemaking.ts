@@ -66,7 +66,7 @@ const prayerActions: FiremakingAction[] = blessedLogs.map(([name, requiredLevel,
   const log = item(name);
   return {
     id: log.itemId, name, requiredLevel, baseXp, intervalSeconds,
-    inputs: [log], outputs: [], drops: [{ ...item('Blessed Fragments'), chance }],
+    inputs: [log], outputs: [], drops: [{ ...item('Blessed Fragments', 1, 'BlessedFragment'), chance }],
     prayerPoints, source: `${sourceUrl}/${log.itemId}`,
   };
 });

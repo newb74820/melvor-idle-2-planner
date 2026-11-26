@@ -147,6 +147,7 @@ h1 { margin-bottom: 4px; font-size: 24px; font-weight: 600; letter-spacing: 0; }
 .number-input-wrap > span { padding: 0 10px; color: #778077; font: 9px var(--mono); }
 .progression-fields { margin-bottom: 19px; }
 .target-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px; margin: 0 0 13px; background: #111411; border: 1px solid #2e352e; }
+.target-mode.with-knowledge { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .target-mode button { min-height: 31px; padding: 0 8px; color: #8d978b; background: transparent; border: 1px solid transparent; font-size: 10px; cursor: pointer; }
 .target-mode button:hover { color: #dce2d7; }
 .target-mode button.selected { color: var(--lime); background: #22291d; border-color: #3a4630; }

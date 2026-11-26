@@ -1,41 +1,44 @@
 import type { ItemAmount } from '../calculator';
 import type { ResourceRecipe } from '../resource-planner';
 import type { DecodedSave } from '../schemas/save';
+import { expectedArtisanSteps } from './artisan';
+import { beastcraftingActions, resolveBeastcraftingStations } from './beastcrafting';
 import { woodcuttingActions, woodcuttingSource } from './woodcutting';
 import { resolveWoodcuttingRates } from './woodcutting-modifiers';
 import { miningResourceRecipes } from './mining';
+import { craftingActions } from './crafting';
 import { firemakingActions } from './firemaking';
+import { fletchingActions } from './fletching';
+import { smithingActions } from './smithing';
 
 const item = (itemId: string, itemName: string, quantity = 1): ItemAmount => ({ itemId, itemName, quantity });
-const normalLog = item('NormalLog', 'Normal Log');
 const bowstring = item('Bowstring', 'Bowstring');
-const copperBar = item('CopperBar', 'Copper Bar');
 const feathers = item('Feathers', 'Feathers');
 const sand = item('BucketofSand', 'Bucket of Sand');
-const glass = item('MoltenGlass', 'Molten Glass');
 
-// Whole batches and base rates from build 26724394.
-const artisanRecipes: ResourceRecipe[] = [
-  { id: 'crafting-bowstring', skill: 'Crafting', name: 'Bowstring', requiredLevel: 1, baseXp: 2, intervalSeconds: 2,
-    inputs: [item('Flax', 'Flax')], outputs: [bowstring], source: 'https://db.melvor.aevv.net/artisan-recipe/Bowstring' },
-  { id: 'fletching-normal-bow', skill: 'Fletching', name: 'Normal Bow', requiredLevel: 1, baseXp: 7, intervalSeconds: 6,
-    inputs: [{ ...normalLog, quantity: 2 }, bowstring], outputs: [item('NormalBow', 'Normal Bow')], source: 'https://db.melvor.aevv.net/artisan-recipe/NormalBow' },
-  { id: 'fletching-arrow-shaft', skill: 'Fletching', name: 'Arrow Shaft', requiredLevel: 1, baseXp: 2, intervalSeconds: 2,
-    inputs: [normalLog], outputs: [item('ArrowShaft', 'Arrow Shaft', 20)], source: 'https://db.melvor.aevv.net/artisan-recipe/ArrowShaft' },
-  { id: 'fletching-headless-arrows', skill: 'Fletching', name: 'Headless Arrows', requiredLevel: 1, baseXp: 3, intervalSeconds: 2,
-    inputs: [item('ArrowShaft', 'Arrow Shaft', 10), feathers], outputs: [item('HeadlessArrows', 'Headless Arrows', 10)], source: 'https://db.melvor.aevv.net/artisan-recipe/HeadlessArrows' },
-  { id: 'smithing-copper-bar', skill: 'Smithing', name: 'Copper Bar', requiredLevel: 5, baseXp: 3, intervalSeconds: 2.5,
-    inputs: [item('CopperOre', 'Copper Ore')], outputs: [copperBar], source: 'https://db.melvor.aevv.net/artisan-recipe/CopperBar' },
-  { id: 'smithing-copper-arrowtips', skill: 'Smithing', name: 'Copper Arrowtips', requiredLevel: 5, baseXp: 4, intervalSeconds: 4,
-    inputs: [copperBar], outputs: [item('CopperArrowtips', 'Copper Arrowtips', 10)], source: 'https://db.melvor.aevv.net/artisan-recipe/CopperArrowtips' },
-  { id: 'fletching-copper-arrows', skill: 'Fletching', name: 'Copper Arrows', requiredLevel: 5, baseXp: 6, intervalSeconds: 4,
-    inputs: [item('CopperArrowtips', 'Copper Arrowtips', 4), item('HeadlessArrows', 'Headless Arrows', 4)],
-    outputs: [item('CopperArrows', 'Copper Arrows', 4)], source: 'https://db.melvor.aevv.net/artisan-recipe/CopperArrows' },
-  { id: 'smithing-molten-glass', skill: 'Smithing', name: 'Molten Glass', requiredLevel: 2, baseXp: 2, intervalSeconds: 2.5,
-    inputs: [sand], outputs: [glass], source: 'https://db.melvor.aevv.net/artisan-recipe/MoltenGlass' },
-  { id: 'crafting-pack-of-vials', skill: 'Crafting', name: 'Pack of Vials', requiredLevel: 10, baseXp: 7, intervalSeconds: 4,
-    inputs: [{ ...glass, quantity: 2 }], outputs: [item('EmptyVial', 'Pack of Vials', 20)], source: 'https://db.melvor.aevv.net/artisan-recipe/EmptyVial' },
-];
+const artisanRecipeIds = new Map([
+  ['Bowstring', 'crafting-bowstring'],
+  ['String', 'crafting-string'],
+  ['Leather', 'crafting-leather'],
+  ['ReinforcedString', 'crafting-reinforced-string'],
+  ['FortifiedString', 'crafting-fortified-string'],
+  ['EmptyVial', 'crafting-pack-of-vials'],
+  ['NormalBow', 'fletching-normal-bow'],
+  ['ArrowShaft', 'fletching-arrow-shaft'],
+  ['HeadlessArrows', 'fletching-headless-arrows'],
+  ['CopperArrows', 'fletching-copper-arrows'],
+  ['CopperBar', 'smithing-copper-bar'],
+  ['CopperArrowtips', 'smithing-copper-arrowtips'],
+  ['MoltenGlass', 'smithing-molten-glass'],
+]);
+const artisanSources: ResourceRecipe[] = ([
+  ['Crafting', craftingActions],
+  ['Fletching', fletchingActions],
+  ['Smithing', smithingActions],
+] as const).flatMap(([skill, actions]) => actions.flatMap((recipe) => {
+  const id = artisanRecipeIds.get(recipe.id);
+  return id ? [{ ...recipe, id, skill }] : [];
+}));
 
 const normalBurn = firemakingActions[0];
 const firemakingSources: ResourceRecipe[] = normalBurn.drops.map(({ chance, ...drop }) => ({
@@ -83,5 +86,12 @@ export function resourceRecipesForCharacter(save: DecodedSave | null, useImporte
       })),
     };
   });
-  return [...gathering, ...miningResourceRecipes, ...artisanRecipes, ...firemakingSources, ...shopSources];
+  const { stepSkipping } = resolveBeastcraftingStations(useImportedBonuses ? save : null);
+  const beastcrafting = beastcraftingActions.map((recipe): ResourceRecipe => ({
+    ...recipe,
+    id: `beastcrafting-${recipe.id}`,
+    skill: 'Beastcrafting',
+    intervalSeconds: recipe.secondsPerStep * expectedArtisanSteps(recipe.steps, stepSkipping / 100),
+  }));
+  return [...gathering, ...miningResourceRecipes, ...artisanSources, ...beastcrafting, ...firemakingSources, ...shopSources];
 }

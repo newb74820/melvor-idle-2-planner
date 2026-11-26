@@ -34,6 +34,50 @@ Mining pays XP on each rock break. With base break probability `p`, the hit cap 
 
 Burns to target use the shared XP formula. Multiply burns by the recipe interval for active time and by each ingredient quantity for material requirements. Compare requirements with the planning inventory. Costs use full batches before preservation. Each item's expected output is burns times its quantity, roll chance, and manual output-doubling multiplier. Prayer Points are tracked as a separate reward. [Firemaking mechanics](https://melvoridle.wiki/melvor-idle-2/mechanics/firemaking)
 
+## Cooking
+
+Only successful attempts award XP or output. Required successful batches use the shared XP formula. For each group of batches attempted at a given Cooking level, divide the number of successes needed by the base success chance at that level. Success chance is capped at 100% and calculated as `(69 + Cooking level + manual proficiency) / (69 + recipe difficulty)`. For a locked recipe the preview uses at least its required level.
+
+Sum the expected attempts across levels and multiply by the recipe interval for expected time. Ingredient costs round the expected attempt count up to a whole attempt, then apply the full per-attempt recipe cost before preservation. This is a budget based on the mean, so actual ingredient use can vary. Outputs use the successful batch count and manual doubling probability. [Cooking mechanics](https://melvoridle.wiki/melvor-idle-2/mechanics/cooking)
+
+## Smithing, Fletching, Crafting, and Runecrafting
+
+Each completed batch awards the recipe's XP and outputs and consumes its inputs once. Base time per batch is the time per step multiplied by the number of steps. For a manual step-skipping chance `p`, expected steps follow `E(n) = 1 + (1 - p) × E(n - 1) + p × E(n - 2)` with `E(0) = 0` and `E(1) = 1`. Step skipping affects time. Ingredient budgets use full batch costs before preservation. [Artisan mechanics](https://melvoridle.wiki/melvor-idle-2/mechanics/artisan)
+
+Beastcrafting adds imported station bonuses to manually entered step skipping and output doubling. The calculator shows expected ingredient use after station preservation alongside the full recipe budget. The Resource Planner uses expected timing and budgets whole batches using base yields and costs.
+
+Rune packs grant XP on every completed batch. For each rune in the pack, multiply the batch count by that rune's chance, quantity on success, and the output-doubling multiplier to estimate its yield. [Runecrafting recipe extract](https://db.melvor.aevv.net/entity/Runecrafting)
+
+## Herblore
+
+XP, ingredient costs, and potion output apply at each bottling. A fresh brew pays the combined preparation, heating, and stirring time before its first bottling and repeats that setup every ten bottlings. From a fresh brew, training time is `ceil(bottlings / 10) × setup time + bottlings × bottling time`. The XP/hour display uses complete brew cycles. Ingredient costs use the listed per-bottling quantities before preservation. [Herblore mechanics](https://melvoridle.wiki/melvor-idle-2/mechanics/herblore)
+
+## Thieving
+
+Stealth starts at the Thieving level plus bonuses from supported equipped items and manually entered bonuses. The calculator multiplies base target Perception by the area's imported shop Perception modifier and rounds down. Each stage succeeds with probability `min(1, (100 + Stealth) / (100 + Perception))`.
+
+Only completed pickpockets and heists award XP. Each successful roll advances one stage, and a failure keeps the stage. At each level, divide the required successful stages by the stage success chance to estimate attempts. Attempts use the target's interval, and expected failures add two seconds each. A failure that deals damage rolls uniformly from 1 through the target's maximum hit. Damage avoidance reduces expected HP lost while the base stun still applies. [Thieving mechanics](https://melvoridle.wiki/melvor-idle-2/mechanics/thieving)
+
+GP and regular item loot roll on successful stages, while completion loot rolls once per completed target. Manual doubling applies to stage items. The food budget divides expected HP lost by effective healing per item, rounds up, and compares with the selected food stock. The budget assumes full healing per item and excludes regeneration, newly looted food, and Auto Eat's timing.
+
+## Hunting
+
+An already-discovered target uses an average of 1.75 surveys and the midpoint of its tracking step and time ranges. Each failed trap adds the minimum tracking steps before another attempt. Trapping expectations weight each attempt by the chance of reaching it, applying the chosen trap's accumulating failure bonus to catch chance. Expected trap costs apply the chosen trap's preservation chance. Preferred bait reduces trapping intervals by 10% and is budgeted once per attempt when enabled. [Hunting mechanics](https://melvoridle.wiki/melvor-idle-2/mechanics/hunting)
+
+Catch XP uses the mean size and weight factor at the entered journal level. Standard item yields account for rounding, item roll chance, doubling, and the base rare-species multiplier. Setup uses a fixed journal level and base surveying and tracking rates. Survey XP, survey loot, unique rare-species rewards, and automatic fallback to unbaited hunting or other traps are outside the estimates.
+
+## Agility
+
+An obstacle succeeds with `0.95 ^ (max(0, difficulty − techniqueLevel + 1) / 2)`. It reaches 100% when the technique level exceeds its adjusted difficulty. Traps start at 80% and cap at 95%. The planner works backward through each path to weight obstacle reach, restarts, manual retries, and manual skips. It divides expected time, damage, and attempts per start by the chance to finish that start. Technique XP from completions is applied before the next run. [Agility mechanics](https://melvoridle.wiki/melvor-idle-2/mechanics/agility)
+
+Arena tickets budget the rounded-up expected number of paid starts, including restarts and manual entry preservation. Food budgets use expected damage after manual mitigation and avoidance, rounded up by healing per food. Obstacle drops and timed rewards are outside the loot projection. Equipment, technique bonuses, and other Agility modifiers can be entered manually using the values shown in the game.
+
+## Astrology
+
+Each observation awards XP and Knowledge to the selected constellation. The calculator rounds up the observations required for either the XP or Knowledge target. Every unlocked minor node adds 2% Knowledge in that constellation. Purchased telescope bonuses and manual percentage modifiers are additive within each stat, and the observation interval is rounded down to a whole millisecond. [Astrology mechanics](https://melvoridle.wiki/melvor-idle-2/mechanics/astrology)
+
+Knowledge thresholds grant minor-node slots. Every four unlocked minor nodes grant one major-node slot. Projections hold the currently unlocked nodes fixed through the plan and exclude random sightings and temporary event effects.
+
 ## Validation
 
 On November 26, 2026, all 22 planner rows matched the [build 26724394 recipe extract](https://db.melvor.aevv.net/entity/Woodcutting) for unlock level, XP per cut, base cut time, and primary yield after correcting the Oak and Redwood unlock levels. All 120 XP thresholds matched the [published XP table for the same build](https://melvor2.com/xp-table/). The planner keeps the full table for reference and caps level targets and XP-derived levels at 99, as specified in the [developer's Early Access announcement](https://news.melvoridle.com/melvor-idle-2-a-runescape-adventure-releases-17-november-2026-into-steam-early-access-next-fest-roundup/).

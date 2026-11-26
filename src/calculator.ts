@@ -50,6 +50,20 @@ export interface CalculationResult {
   products: ProductCalculation[];
 }
 
+export function calculateResourceCosts(inputs: ItemAmount[], attempts: number, inventory: Readonly<Record<string, number>>): ResourceCalculation[] {
+  return inputs.map((item) => {
+    const required = attempts * item.quantity;
+    const owned = inventory[item.itemId] ?? 0;
+    return {
+      ...item,
+      required,
+      owned,
+      missing: Math.max(0, required - owned),
+      remaining: Math.max(0, owned - required),
+    };
+  });
+}
+
 export function calculateActionPlan(input: CalculationInput): CalculationResult {
   const { action, currentXp, targetXp } = input;
   const flatXpBonus = input.flatXpBonus ?? 0;
@@ -93,17 +107,7 @@ export function calculateActionPlan(input: CalculationInput): CalculationResult 
   const remainingXp = Math.max(0, targetXp - currentXp);
   const actions = Math.ceil(remainingXp / effectiveXpPerAction);
   const xpGained = actions * effectiveXpPerAction;
-  const resources = action.inputs.map((item) => {
-    const required = actions * item.quantity;
-    const owned = inventory[item.itemId] ?? 0;
-    return {
-      ...item,
-      required,
-      owned,
-      missing: Math.max(0, required - owned),
-      remaining: Math.max(0, owned - required),
-    };
-  });
+  const resources = calculateResourceCosts(action.inputs, actions, inventory);
   const products = action.outputs.map((item) => {
     const produced = actions * item.quantity * (1 + outputDoublingChance);
     const owned = inventory[item.itemId] ?? 0;

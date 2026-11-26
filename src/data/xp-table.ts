@@ -43,3 +43,15 @@ export function levelForXp(totalXp: number): number {
   }
   return low + 1;
 }
+
+// A completed action earns XP at its starting level, even when it crosses several thresholds.
+export function* completionsByLevel(currentXp: number, xpPerCompletion: number, completions: number) {
+  let previous = 0;
+  for (let level = levelForXp(currentXp); level <= xpTableSource.levelCap && previous < completions; level++) {
+    const throughLevel = level === xpTableSource.levelCap
+      ? completions
+      : Math.min(completions, Math.ceil((xpAtLevel(level + 1) - currentXp) / xpPerCompletion));
+    if (throughLevel > previous) yield { level, count: throughLevel - previous };
+    previous = throughLevel;
+  }
+}

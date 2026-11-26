@@ -30,7 +30,7 @@ The Rust parser validates input and component bounds, runs locally, reports unsu
 
 Release version-32 saves can also supply equipped Woodcutting toolbelt slots. The slot layout was cross-checked against the local samples and the [melvor2sim format reference](https://github.com/jtwilli/melvor2sim/blob/main/read_save.py). An empty map is a decoded toolbelt with no equipped items. A missing or null field means the toolbelt is unavailable, including older stored profiles. Rereading the source save supplies the newer field when its layout is supported. Unexpected slot layouts remain listed as unknown components.
 
-The release version-32 Astrology Action component supplies Deedree's unlocked node IDs. The layout was checked against the local samples. An empty list indicates that no Deedree nodes were found, while a missing or null field indicates unavailable data. Reread older saves to populate the new field.
+The release version-32 Astrology Action component supplies Knowledge and unlocked minor and major node IDs per constellation. A missing constellation in a decoded table starts at zero. A missing or null table indicates unavailable data. Deedree's combined node list remains available for Woodcutting bonuses and older profiles. Reread the original save to populate constellation Knowledge in older profiles.
 
 The release version-32 Shop component stores purchase counts keyed by game ID. The planner reads those counts locally and applies supported permanent bonuses once for each purchased upgrade. Reread older saves to populate this field.
 

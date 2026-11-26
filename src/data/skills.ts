@@ -17,6 +17,7 @@ export const skillGroups = [
 ] as const;
 
 export const skillCatalog = [...nonCombat, ...combat];
+export const passiveSkills: ReadonlySet<SkillId> = new Set(['Farming', 'Ranching']);
 
 const normalize = (name: string) => name.split(':').at(-1)?.toLowerCase().replace(/[^a-z]/g, '');
 

@@ -39,5 +39,16 @@
 - [x] Extend resource acquisition with Mining break estimates, opt-in Firemaking drops, and shop purchase budgets.
 - [x] Add Fishing and Mining calculators with imported XP and bank quantities, base recipe timing, and expected drops.
 - [x] Add the Firemaking calculator with burn times, inventory shortages, expected drops, and Prayer Points.
+- [x] Add Cooking recipes with level-based success rates, ingredient shortages, and whole-batch yields.
+- [x] Add Smithing recipes with per-step timing, step-skipping estimates, and inventory-aware batch costs.
+- [x] Add Fletching recipes through the shared artisan calculator and reuse their data in the Resource Planner.
+- [x] Add Crafting recipes through the shared artisan calculator, including quest requirements and bank-aware batch costs.
+- [x] Add Runecrafting recipes with Mastery Guild requirements and expected yields for each rune in a pack.
+- [x] Add Herblore recipes with per-bottling costs and yields, recurring brew setup, and tier requirements.
+- [x] Add Thieving targets with staged heists, expected damage and loot, and an inventory-aware food budget.
+- [x] Add Hunting targets with compatible trap tiers, optional bait, and trap and bait inventory estimates.
+- [x] Add Beastcrafting recipes with shared artisan timing, imported station bonuses, and resource planning.
+- [x] Add Agility paths with technique progression, obstacle failure and restart estimates, and food and arena ticket budgets.
+- [x] Add Astrology constellations with XP and Knowledge targets, imported node progress, and telescope bonuses.
 - [ ] Additional skills and action comparisons.
 - [ ] Progression plans, equipment comparison, and local persistence.

@@ -3,13 +3,13 @@ import {
   Hammer, Heart, Leaf, PawPrint, Pickaxe, Shield, Skull, Sparkles, Sprout, Sword, Trees, WandSparkles,
   type LucideIcon,
 } from 'lucide-react';
-import { findSkillId, skillGroups, skillProgress, type SkillId } from '../data/skills';
+import { findSkillId, passiveSkills, skillGroups, skillProgress, type SkillId } from '../data/skills';
 import { skillCalculators } from '../data/skill-calculators';
 import { woodcuttingActions } from '../data/woodcutting';
 import { resolveWoodcuttingRates } from '../data/woodcutting-modifiers';
 import type { DecodedSave } from '../schemas/save';
 
-const icons: Record<SkillId, LucideIcon> = {
+export const skillIcons: Record<SkillId, LucideIcon> = {
   Woodcutting: Axe, Fishing: Fish, Mining: Pickaxe, Firemaking: Flame, Cooking: ChefHat,
   Smithing: Anvil, Fletching: ArrowUpRight, Crafting: Hammer, Runecrafting: Circle, Herblore: Leaf,
   Thieving: Crosshair, Farming: Sprout, Ranching: Trees, Hunting: PawPrint, Beastcrafting: PawPrint,
@@ -50,7 +50,7 @@ export default function SkillDashboard({ save, onImport, onSelect, refreshError 
         <h2>{name} skills</h2>
         <div className="skill-card-grid">
           {skills.map((skill) => {
-            const Icon = icons[skill];
+            const Icon = skillIcons[skill];
             const progress = skillProgress(save?.skills ?? [], skill);
             const ready = Object.hasOwn(skillCalculators, skill);
             const activity = activeSkill === skill ? save?.activity.target : null;
@@ -77,7 +77,7 @@ export default function SkillDashboard({ save, onImport, onSelect, refreshError 
               {activity && <span className="skill-card-context" title={activity}>Saved action · {activity}</span>}
               {skill === 'Woodcutting' && woodcuttingBonuses.length > 0 &&
                 <span className="skill-card-bonuses" title="Known bonuses for Normal Tree">{woodcuttingBonuses.join(' · ')}</span>}
-              <span className="skill-card-status">{ready ? 'Open calculator' : 'Calculator planned'}</span>
+              <span className="skill-card-status">{ready ? 'Open calculator' : passiveSkills.has(skill) ? 'Passive skill' : 'Calculator planned'}</span>
             </button>;
           })}
         </div>

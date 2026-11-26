@@ -40,11 +40,22 @@ With the dependencies installed, run `npm.cmd run dev` and open the local URL pr
 
 To run the frontend tests, use `npm.cmd test`.
 
-## Current support
+## Current source features
 
-- The Dashboard shows skill levels and XP from the selected character. Woodcutting, Fishing, Mining, and Firemaking are available from both the skill cards and the calculator dropdown.
+- The Dashboard shows skill levels and XP from the selected character. Open an implemented skill from its card or the calculator dropdown.
 - Fishing covers 24 spots with cast timing and expected fish, junk, and known special catches. Mining covers 28 rocks with expected break timing and per-hit geode drops. Both use imported XP and bank counts with manual XP and doubling bonuses.
 - Firemaking covers 27 recipes with burn time, whole-batch material requirements, bank shortages, expected drops, and Prayer Points.
+- Cooking covers 77 recipes with level-based success rates, expected cook time, ingredient shortages, and whole-batch yields.
+- Smithing covers 208 recipes with per-step timing, whole-batch material costs and yields, bank shortages, and manual step-skipping estimates.
+- Fletching covers 66 recipes using the same per-step timing, batch costs, and inventory estimates as Smithing.
+- Crafting covers 173 recipes for materials, leather, jewellery, hunting traps, and quest objectives.
+- Runecrafting covers 123 recipes, including standard runes, mastery-gated rune packs, magic gear, and quest recipes.
+- Herblore covers 155 recipes with per-bottling ingredient costs and yields, brew setup time, and potion tier requirements.
+- Thieving covers 44 targets with expected attempts, stuns, loot, damage, and a food budget based on healing and bank stock.
+- Hunting covers 44 targets and 28 trap options, with trapless hunting where supported, optional bait, and bank-aware supply estimates. Farming and Ranching are tracked as passive skills.
+- Beastcrafting covers 145 recipes with imported station bonuses, bank-aware ingredient costs, and Resource Planner support.
+- Agility covers 57 selectable paths with imported technique progress, per-obstacle success, bank-aware food and arena ticket budgets, and projected technique levels.
+- Astrology covers all 12 constellations with XP and Knowledge targets, imported node progress, and telescope bonuses.
 - 22 Woodcutting actions referenced against the public Melvor2.com calculator for Early Access build `26724394`.
 - Deterministic action count, XP/hour, elapsed action time, and XP overshoot calculations.
 - Build-specific primary Woodcutting yields, zero input costs, and projected inventory totals using imported or manually entered quantities.

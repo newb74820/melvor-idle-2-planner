@@ -49,5 +49,5 @@ it('tracks every quest ingredient and keeps prayer rewards separate from bank dr
   expect(burn.prerequisiteNote).toContain('In the Thick of It');
   const blessed = firemakingActions.find(({ id }) => id === 'BlessedLog')!;
   expect(blessed.prayerPoints).toBe(55);
-  expect(expectedExtraProducts(blessed)).toEqual([{ itemId: 'BlessedFragments', itemName: 'Blessed Fragments', quantity: 0.1 }]);
+  expect(expectedExtraProducts(blessed)).toEqual([{ itemId: 'BlessedFragment', itemName: 'Blessed Fragments', quantity: 0.1 }]);
 });

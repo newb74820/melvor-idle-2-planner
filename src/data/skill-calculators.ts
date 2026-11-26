@@ -1,8 +1,19 @@
 import type { ItemAmount } from '../calculator';
-import { firemakingActions, firemakingSource, type FiremakingAction } from './firemaking';
-import { fishingActions, type FishingAction } from './fishing';
-import { miningActions, type MiningAction } from './mining';
-import { woodcuttingActions, woodcuttingSource, type WoodcuttingAction } from './woodcutting';
+import { agilityActions, agilitySource } from './agility-courses';
+import { astrologyActions, astrologySource } from './astrology';
+import { beastcraftingActions, beastcraftingSource } from './beastcrafting';
+import { cookingActions, cookingSource } from './cooking';
+import { craftingActions, craftingSource } from './crafting';
+import { firemakingActions, firemakingSource } from './firemaking';
+import { fishingActions } from './fishing';
+import { fletchingActions, fletchingSource } from './fletching';
+import { herbloreActions, herbloreSource } from './herblore';
+import { huntingActions, huntingSource } from './hunting-animals';
+import { miningActions } from './mining';
+import { runecraftingActions, runecraftingSource } from './runecrafting';
+import { smithingActions, smithingSource } from './smithing';
+import { thievingActions, thievingSource } from './thieving';
+import { woodcuttingActions, woodcuttingSource } from './woodcutting';
 
 export const skillCalculators = {
   Woodcutting: {
@@ -34,13 +45,92 @@ export const skillCalculators = {
     actionUnit: 'burn',
     actionPlural: 'burns',
   },
+  Cooking: {
+    actions: cookingActions,
+    dataUrl: cookingSource,
+    actionLabel: 'Cooking recipe',
+    actionUnit: 'successful batch',
+    actionPlural: 'successful batches',
+  },
+  Smithing: {
+    actions: smithingActions,
+    dataUrl: smithingSource,
+    actionLabel: 'Smithing recipe',
+    actionUnit: 'batch',
+    actionPlural: 'batches',
+  },
+  Fletching: {
+    actions: fletchingActions,
+    dataUrl: fletchingSource,
+    actionLabel: 'Fletching recipe',
+    actionUnit: 'batch',
+    actionPlural: 'batches',
+  },
+  Crafting: {
+    actions: craftingActions,
+    dataUrl: craftingSource,
+    actionLabel: 'Crafting recipe',
+    actionUnit: 'batch',
+    actionPlural: 'batches',
+  },
+  Runecrafting: {
+    actions: runecraftingActions,
+    dataUrl: runecraftingSource,
+    actionLabel: 'Runecrafting recipe',
+    actionUnit: 'batch',
+    actionPlural: 'batches',
+  },
+  Herblore: {
+    actions: herbloreActions,
+    dataUrl: herbloreSource,
+    actionLabel: 'Herblore recipe',
+    actionUnit: 'bottling',
+    actionPlural: 'bottlings',
+  },
+  Thieving: {
+    actions: thievingActions,
+    dataUrl: thievingSource,
+    actionLabel: 'Thieving target',
+    actionUnit: 'completion',
+    actionPlural: 'completions',
+  },
+  Hunting: {
+    actions: huntingActions,
+    dataUrl: huntingSource,
+    actionLabel: 'Hunting target',
+    actionUnit: 'catch',
+    actionPlural: 'catches',
+  },
+  Beastcrafting: {
+    actions: beastcraftingActions,
+    dataUrl: beastcraftingSource,
+    actionLabel: 'Beastcrafting recipe',
+    actionUnit: 'batch',
+    actionPlural: 'batches',
+  },
+  Agility: {
+    actions: agilityActions,
+    dataUrl: agilitySource,
+    actionLabel: 'Agility course path',
+    actionUnit: 'completion',
+    actionPlural: 'completions',
+  },
+  Astrology: {
+    actions: astrologyActions,
+    dataUrl: astrologySource,
+    actionLabel: 'Constellation',
+    actionUnit: 'observation',
+    actionPlural: 'observations',
+  },
 };
 
 export type CalculatorSkill = keyof typeof skillCalculators;
+type CalculatorAction = (typeof skillCalculators)[CalculatorSkill]['actions'][number];
 
-export function expectedExtraProducts(action: WoodcuttingAction | FishingAction | MiningAction | FiremakingAction): ItemAmount[] {
+export function expectedExtraProducts(action: CalculatorAction): ItemAmount[] {
   if ('specials' in action) return action.specials;
-  if ('drops' in action) return action.drops.map(({ chance, ...item }) => ({ ...item, quantity: item.quantity * chance }));
+  const rolls = 'drops' in action ? action.drops : 'productRolls' in action ? action.productRolls : undefined;
+  if (rolls) return rolls.map(({ chance, ...item }) => ({ ...item, quantity: item.quantity * chance }));
   if ('hitTiming' in action && action.onHitDrop) {
     const { item, chance } = action.onHitDrop;
     return [{ ...item, quantity: item.quantity * chance * action.hitTiming.expectedHits }];

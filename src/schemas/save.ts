@@ -33,7 +33,20 @@ export const decodedSaveSchema = z.object({
   }),
   wallet: z.record(z.string().min(1).max(256), z.string().regex(/^-?\d{1,20}$/)),
   woodcuttingToolbelt: z.record(z.string().min(1).max(256), z.string().min(1).max(256)).nullish(),
+  thievingToolbelt: z.record(z.string().min(1).max(256), z.string().min(1).max(256)).nullish(),
+  agilityTechniqueXp: z.object({
+    Climbing: finiteXp.optional(),
+    Jumping: finiteXp.optional(),
+    Evading: finiteXp.optional(),
+    Balancing: finiteXp.optional(),
+    Rappelling: finiteXp.optional(),
+  }).nullish(),
   deedreeNodes: z.array(z.string().min(1).max(256)).max(64).nullish(),
+  astrologyConstellations: z.record(z.string().min(1).max(256), z.object({
+    knowledge: finiteXp,
+    minorNodes: z.array(z.string().min(1).max(256)).max(64),
+    majorNodes: z.array(z.string().min(1).max(256)).max(64),
+  })).nullish(),
   shopPurchases: z.record(z.string().min(1).max(256), z.number().int().nonnegative().max(2_147_483_647)).nullish(),
   woodcuttingMasteryTasks: z.record(z.string().min(1).max(256), z.object({
     goalComplete: z.boolean().nullable(),

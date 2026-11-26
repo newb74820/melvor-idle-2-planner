@@ -34,11 +34,22 @@ pub struct DecodedSave {
     pub bank: Bank,
     pub wallet: BTreeMap<String, String>,
     pub woodcutting_toolbelt: Option<BTreeMap<String, String>>,
+    pub thieving_toolbelt: Option<BTreeMap<String, String>>,
+    pub agility_technique_xp: Option<BTreeMap<String, f64>>,
     pub deedree_nodes: Option<BTreeSet<String>>,
+    pub astrology_constellations: Option<BTreeMap<String, AstrologyConstellation>>,
     pub shop_purchases: Option<BTreeMap<String, i32>>,
     pub woodcutting_mastery_tasks: Option<BTreeMap<String, MasteryTaskState>>,
     pub woody_unlocked: Option<bool>,
     pub unknown_components: Vec<UnknownComponent>,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AstrologyConstellation {
+    pub knowledge: f64,
+    pub minor_nodes: BTreeSet<String>,
+    pub major_nodes: BTreeSet<String>,
 }
 
 #[derive(Debug, Serialize)]
@@ -298,7 +309,10 @@ fn parse_decompressed_save(data: &[u8]) -> Result<DecodedSave, String> {
     let mut bank = Bank::default();
     let mut wallet = BTreeMap::new();
     let mut woodcutting_toolbelt = None;
+    let mut thieving_toolbelt = None;
+    let mut agility_technique_xp = None;
     let mut deedree_nodes = None;
+    let mut astrology_constellations = None;
     let mut shop_purchases = None;
     let mut woodcutting_mastery_tasks = None;
     let mut woody_unlocked = None;
@@ -313,6 +327,16 @@ fn parse_decompressed_save(data: &[u8]) -> Result<DecodedSave, String> {
         for (component_name, component_payload) in components {
             let component_short = short_id(&component_name).to_string();
             match (entity_name.as_str(), component_name.as_str()) {
+                ("MelvorBase:Agility", "Techniques") if version == 32 && !demo => {
+                    match parse_agility_techniques(component_payload) {
+                        Ok(techniques) => agility_technique_xp = Some(techniques),
+                        Err(_) => unknown_components.push(UnknownComponent {
+                            entity: entity_short.clone(),
+                            component: component_short,
+                            size_bytes: component_payload.len(),
+                        }),
+                    }
+                }
                 ("MelvorBase:Woodcutting", "MasteryGuild") if version == 32 && !demo => {
                     match parse_mastery_tasks(component_payload) {
                         Ok(tasks) => woodcutting_mastery_tasks = Some(tasks),
@@ -344,8 +368,13 @@ fn parse_decompressed_save(data: &[u8]) -> Result<DecodedSave, String> {
                     }
                 }
                 ("MelvorBase:Astrology", "Action") if version == 32 && !demo => {
-                    match parse_deedree_nodes(component_payload) {
-                        Ok(nodes) => deedree_nodes = Some(nodes),
+                    match parse_astrology_constellations(component_payload) {
+                        Ok(constellations) => {
+                            deedree_nodes = Some(constellations.get("Deedree")
+                                .map(|entry| entry.minor_nodes.union(&entry.major_nodes).cloned().collect())
+                                .unwrap_or_default());
+                            astrology_constellations = Some(constellations);
+                        }
                         Err(_) => unknown_components.push(UnknownComponent {
                             entity: entity_short.clone(),
                             component: component_short,
@@ -353,9 +382,14 @@ fn parse_decompressed_save(data: &[u8]) -> Result<DecodedSave, String> {
                         }),
                     }
                 }
-                ("MelvorBase:Woodcutting", "Toolbelt") if version == 32 && !demo => {
-                    match parse_woodcutting_toolbelt(component_payload) {
-                        Ok(slots) => woodcutting_toolbelt = Some(slots),
+                ("MelvorBase:Woodcutting" | "MelvorBase:Thieving", "Toolbelt") if version == 32 && !demo => {
+                    let toolbelt = if entity_name == "MelvorBase:Woodcutting" {
+                        &mut woodcutting_toolbelt
+                    } else {
+                        &mut thieving_toolbelt
+                    };
+                    match parse_toolbelt(component_payload) {
+                        Ok(slots) => *toolbelt = Some(slots),
                         Err(_) => unknown_components.push(UnknownComponent {
                             entity: entity_short.clone(),
                             component: component_short,
@@ -403,7 +437,10 @@ fn parse_decompressed_save(data: &[u8]) -> Result<DecodedSave, String> {
         bank,
         wallet,
         woodcutting_toolbelt,
+        thieving_toolbelt,
+        agility_technique_xp,
         deedree_nodes,
+        astrology_constellations,
         shop_purchases,
         woodcutting_mastery_tasks,
         woody_unlocked,
@@ -488,33 +525,49 @@ fn parse_shop_purchases(payload: &[u8]) -> Result<BTreeMap<String, i32>, String>
     Ok(purchases)
 }
 
-fn parse_deedree_nodes(payload: &[u8]) -> Result<BTreeSet<String>, String> {
+fn parse_astrology_constellations(payload: &[u8]) -> Result<BTreeMap<String, AstrologyConstellation>, String> {
     let mut reader = Reader::new(payload);
     // Started flag, action timer, and two view flags precede the constellation table.
     reader.take(16)?;
-    let constellations = reader.table()?;
-    let mut nodes = BTreeSet::new();
-    if let Some((_, bytes)) = constellations.iter().find(|(id, _)| id == "MelvorBase:Deedree") {
+    let mut constellations = BTreeMap::new();
+    for (id, bytes) in reader.table()? {
+        let Some(name) = id.strip_prefix("MelvorBase:") else { continue };
+        if !matches!(name, "Deedree" | "Terra" | "Ameria" | "Ceedyr" | "Iridan" | "Syllia" |
+            "Arachi" | "Hyden" | "Vale" | "Ko" | "Tellus" | "Qimican") {
+            continue;
+        }
         let mut entry = Reader::new(bytes);
-        entry.f64()?; // Knowledge balance
-        for _ in 0..2 { // Minor and major node lists
-            let count = entry.count()?;
-            for _ in 0..count {
-                let id = entry.string()?;
-                if id.is_empty() || id.len() > 256 || nodes.len() >= 64 || !nodes.insert(id) {
-                    return Err("Astrology node list is invalid.".into());
-                }
-            }
+        let knowledge = entry.f64()?;
+        if !knowledge.is_finite() || knowledge < 0.0 {
+            return Err("Astrology knowledge is invalid.".into());
         }
-        if !entry.is_empty() {
-            return Err("Deedree has an unsupported layout.".into());
+        let minor_nodes = parse_astrology_nodes(&mut entry)?;
+        let major_nodes = parse_astrology_nodes(&mut entry)?;
+        if !entry.is_empty() || !minor_nodes.is_disjoint(&major_nodes) {
+            return Err("Astrology constellation has an unsupported layout.".into());
         }
+        constellations.insert(name.to_string(), AstrologyConstellation { knowledge, minor_nodes, major_nodes });
     }
     // The Action component continues with UI and action-selection state.
+    Ok(constellations)
+}
+
+fn parse_astrology_nodes(reader: &mut Reader<'_>) -> Result<BTreeSet<String>, String> {
+    let count = reader.count()?;
+    if count > 64 {
+        return Err("Astrology node list is too long.".into());
+    }
+    let mut nodes = BTreeSet::new();
+    for _ in 0..count {
+        let id = reader.string()?;
+        if id.is_empty() || id.len() > 256 || !nodes.insert(id) {
+            return Err("Astrology node list is invalid.".into());
+        }
+    }
     Ok(nodes)
 }
 
-fn parse_woodcutting_toolbelt(payload: &[u8]) -> Result<BTreeMap<String, String>, String> {
+fn parse_toolbelt(payload: &[u8]) -> Result<BTreeMap<String, String>, String> {
     let mut reader = Reader::new(payload);
     let mut slots = BTreeMap::new();
     for (slot, bytes) in reader.table()? {
@@ -540,6 +593,28 @@ fn parse_woodcutting_toolbelt(payload: &[u8]) -> Result<BTreeMap<String, String>
         return Err("Toolbelt trailer has an unsupported layout.".into());
     }
     Ok(slots)
+}
+
+fn parse_agility_techniques(payload: &[u8]) -> Result<BTreeMap<String, f64>, String> {
+    let mut reader = Reader::new(payload);
+    let mut techniques = BTreeMap::new();
+    for (id, bytes) in reader.table()? {
+        let name = id.strip_prefix("MelvorBase:").unwrap_or(&id);
+        if !matches!(name, "Climbing" | "Jumping" | "Evading" | "Balancing" | "Rappelling") {
+            continue;
+        }
+        if bytes.len() != 8 {
+            return Err("Agility technique experience has an unsupported layout.".into());
+        }
+        let xp = parse_skill(name.to_string(), bytes)?.xp;
+        if techniques.insert(name.to_string(), xp).is_some() {
+            return Err("Duplicate Agility technique experience.".into());
+        }
+    }
+    if !reader.is_empty() {
+        return Err("Agility techniques have trailing data.".into());
+    }
+    Ok(techniques)
 }
 
 fn parse_skill(name: String, payload: &[u8]) -> Result<Skill, String> {
@@ -1010,20 +1085,28 @@ mod tests {
     }
 
     #[test]
-    fn reads_deedree_nodes_and_rejects_truncated_constellation_data() {
+    fn reads_constellation_knowledge_and_nodes_and_rejects_truncated_data() {
         let mut deedree = 18.0_f64.to_le_bytes().to_vec();
         write_i32(&mut deedree, 2);
         write_string(&mut deedree, "MelvorBase:DeedreeA1");
         write_string(&mut deedree, "MelvorBase:DeedreeB1");
         write_i32(&mut deedree, 0);
+        let mut terra = 290.5_f64.to_le_bytes().to_vec();
+        write_i32(&mut terra, 0);
+        write_i32(&mut terra, 1);
+        write_string(&mut terra, "MelvorBase:TerraMajor1");
         let mut payload = vec![0; 16];
-        payload.extend(write_table(vec![("MelvorBase:Deedree", deedree)]));
-        assert_eq!(parse_deedree_nodes(&payload).unwrap(), BTreeSet::from([
+        payload.extend(write_table(vec![("MelvorBase:Deedree", deedree), ("MelvorBase:Terra", terra)]));
+        let progress = parse_astrology_constellations(&payload).unwrap();
+        assert_eq!(progress["Deedree"].knowledge, 18.0);
+        assert_eq!(progress["Deedree"].minor_nodes, BTreeSet::from([
             "MelvorBase:DeedreeA1".to_string(),
             "MelvorBase:DeedreeB1".to_string(),
         ]));
+        assert_eq!(progress["Terra"].knowledge, 290.5);
+        assert!(progress["Terra"].major_nodes.contains("MelvorBase:TerraMajor1"));
         payload.pop();
-        assert!(parse_deedree_nodes(&payload).is_err());
+        assert!(parse_astrology_constellations(&payload).is_err());
     }
 
     #[test]
@@ -1037,11 +1120,25 @@ mod tests {
             ("MelvorBase:WoodcuttingBoots", boots),
             ("MelvorBase:WoodcuttingTool", empty_slot),
         ]);
-        assert!(parse_woodcutting_toolbelt(&payload).is_err());
+        assert!(parse_toolbelt(&payload).is_err());
         write_i32(&mut payload, 0);
-        assert_eq!(parse_woodcutting_toolbelt(&payload).unwrap(), BTreeMap::from([
+        assert_eq!(parse_toolbelt(&payload).unwrap(), BTreeMap::from([
             ("MelvorBase:WoodcuttingBoots".to_string(), "MelvorBase:TreesproutBoots".to_string()),
         ]));
+    }
+
+    #[test]
+    fn reads_agility_technique_xp_and_rejects_invalid_entries() {
+        let techniques = write_table(vec![
+            ("MelvorBase:Climbing", 1234.5_f64.to_le_bytes().to_vec()),
+            ("MelvorBase:Jumping", 10.0_f64.to_le_bytes().to_vec()),
+        ]);
+        let result = parse_agility_techniques(&techniques).unwrap();
+        assert_eq!(result["Climbing"], 1234.5);
+        assert_eq!(result["Jumping"], 10.0);
+        assert!(parse_agility_techniques(&techniques[..techniques.len() - 1]).is_err());
+        let invalid = write_table(vec![("MelvorBase:Climbing", f64::NAN.to_le_bytes().to_vec())]);
+        assert!(parse_agility_techniques(&invalid).is_err());
     }
 
     #[test]
@@ -1067,10 +1164,18 @@ mod tests {
         assert_eq!(save_string.bank.items.len(), 101);
         assert!(sav.woodcutting_toolbelt.is_some());
         assert!(save_string.woodcutting_toolbelt.is_some());
+        assert!(sav.thieving_toolbelt.is_some());
+        assert_eq!(sav.thieving_toolbelt, save_string.thieving_toolbelt);
+        assert!(sav.agility_technique_xp.is_some());
+        assert_eq!(sav.agility_technique_xp, save_string.agility_technique_xp);
         let nodes = sav.deedree_nodes.expect("decode Deedree nodes from local .sav");
         assert!(nodes.contains("MelvorBase:DeedreeA1"));
         assert!(nodes.contains("MelvorBase:DeedreeB1"));
         assert!(save_string.deedree_nodes.is_some());
+        let deedree = &sav.astrology_constellations.unwrap()["Deedree"];
+        assert!(deedree.knowledge >= 66.0);
+        assert!(deedree.minor_nodes.contains("MelvorBase:DeedreeA1"));
+        assert!(save_string.astrology_constellations.is_some());
         assert_eq!(sav.shop_purchases.unwrap()["MelvorBase:CopperAxeHead"], 1);
         assert!(save_string.shop_purchases.is_some());
         assert_eq!(sav.woody_unlocked, Some(false));
