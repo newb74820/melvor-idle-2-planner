@@ -1,19 +1,42 @@
 # Melvor Idle 2 Planner
 
-A local-first planner for Melvor Idle 2. The current slice includes a source-attributed Woodcutting calculator and a read-only local save importer. The original save is never modified.
+A local-first planner for Melvor Idle 2 with skill calculators, an inventory-aware Resource Planner, and read-only save imports.
 
-## Run locally
+## Run the Windows app from source
 
-```sh
-npm install
-npm run dev
+While the installer is in development, use the following steps to open the app on Windows.
+
+### 1. Install the prerequisites
+
+- **Git for Windows** to download the source. [Git for Windows](https://git-scm.com/install/windows)
+- **Node.js 24 LTS**, which includes npm. [Node.js downloads](https://nodejs.org/en/download)
+- **Rust 1.90 or newer** with the stable Windows MSVC toolchain. Use the MSVC default when installing with rustup. [Install Rust](https://rust-lang.org/tools/install/)
+- **Microsoft C++ Build Tools** with the **Desktop development with C++** workload. The app also requires the **Microsoft Edge WebView2 Runtime**, which you can install separately if it is missing. [Tauri Windows prerequisites](https://v2.tauri.app/start/prerequisites/#windows)
+
+Open a new PowerShell window after installing the tools.
+
+### 2. Download and start the app
+
+Run these commands from the folder where you want to keep the project.
+
+```powershell
+git clone https://github.com/newb74820/melvor-idle-2-planner.git
+cd melvor-idle-2-planner
+npm.cmd ci
+npm.cmd run desktop:dev
 ```
 
-Run the unit tests with `npm test` and create a production build with `npm run build`.
+The first launch can take a few minutes while Rust builds the desktop app. Leave PowerShell running while you use the planner. Press **Ctrl+C** in PowerShell to stop it. To start it again, run `npm.cmd run desktop:dev` from the project folder.
 
-## Run as a desktop app
+### 3. Import a save
 
-On Windows with Rust, Microsoft C++ Build Tools, and WebView2 installed, run `npm run desktop:dev` to open a standalone desktop window. Run `npm run desktop:build` to create the Windows installer under `src-tauri/target/release/bundle/nsis/`.
+On the Dashboard, click **Import character**. Choose your Melvor Idle 2 save folder and select a `save_*.sav` file, or use **Choose .sav** or **Paste string**. The planner reads the save locally. You can then click a skill card to open its calculator with your imported progress.
+
+## Preview in a browser
+
+With the dependencies installed, run `npm.cmd run dev` and open the local URL printed in PowerShell. The browser preview supports manual calculator inputs. Save importing and refreshing require the desktop app.
+
+To run the frontend tests, use `npm.cmd test`.
 
 ## Current support
 
