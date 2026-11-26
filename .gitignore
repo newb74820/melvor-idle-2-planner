@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.venv/
+*.tsbuildinfo
+*.log
+
+# Local saves and tooling configuration
+/examples/
+*.sav
+save_string*
+.env
+.env.*
+!.env.example
+/.agents/
+/.codex/
+/.aws/
