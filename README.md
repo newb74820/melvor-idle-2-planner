@@ -2,9 +2,11 @@
 
 A local-first planner for Melvor Idle 2 with skill calculators, an inventory-aware Resource Planner, and read-only save imports.
 
-## Run the Windows app from source
+## Install on Windows
 
-While the installer is in development, use the following steps to open the app on Windows.
+Download the **Windows x64 installer** from the latest release. Run the setup file, then open **Melvor Idle 2 Planner** from the Start menu. [Download the latest release](https://github.com/newb74820/melvor-idle-2-planner/releases/latest)
+
+## Run the Windows app from source
 
 ### 1. Install the prerequisites
 
