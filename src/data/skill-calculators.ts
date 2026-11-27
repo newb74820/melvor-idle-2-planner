@@ -13,6 +13,7 @@ import { miningActions } from './mining';
 import { runecraftingActions, runecraftingSource } from './runecrafting';
 import { smithingActions, smithingSource } from './smithing';
 import { thievingActions, thievingSource } from './thieving';
+import { isCombatSkill, type SkillId } from './skills';
 import { woodcuttingActions, woodcuttingSource } from './woodcutting';
 
 export const skillCalculators = {
@@ -126,6 +127,10 @@ export const skillCalculators = {
 
 export type CalculatorSkill = keyof typeof skillCalculators;
 type CalculatorAction = (typeof skillCalculators)[CalculatorSkill]['actions'][number];
+
+export function hasSkillCalculator(skill: SkillId) {
+  return skill === 'Farming' || skill === 'Ranching' || isCombatSkill(skill) || Object.hasOwn(skillCalculators, skill);
+}
 
 export function expectedExtraProducts(action: CalculatorAction): ItemAmount[] {
   if ('specials' in action) return action.specials;

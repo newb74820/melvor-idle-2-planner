@@ -52,7 +52,9 @@ To run the frontend tests, use `npm.cmd test`.
 - Runecrafting covers 123 recipes, including standard runes, mastery-gated rune packs, magic gear, and quest recipes.
 - Herblore covers 155 recipes with per-bottling ingredient costs and yields, brew setup time, and potion tier requirements.
 - Thieving covers 44 targets with expected attempts, stuns, loot, damage, and a food budget based on healing and bank stock.
-- Hunting covers 44 targets and 28 trap options, with trapless hunting where supported, optional bait, and bank-aware supply estimates. Farming and Ranching are tracked as passive skills.
+- Hunting covers 44 targets and 28 trap options, with trapless hunting where supported, optional bait, and bank-aware supply estimates.
+- Farming models 43 harvestable crops and compost recipes across concurrent plots. Plan a target level or time budget with orchard regrowth, base harvest yields, and bank-aware planting supplies.
+- Ranching models 20 animals in concurrent enclosures, with hourly production, maturity, lifespans, optional replacements, and bank-aware feed budgets.
 - Beastcrafting covers 145 recipes with imported station bonuses, bank-aware ingredient costs, and Resource Planner support.
 - Agility covers 57 selectable paths with imported technique progress, per-obstacle success, bank-aware food and arena ticket budgets, and projected technique levels.
 - Astrology covers all 12 constellations with XP and Knowledge targets, imported node progress, and telescope bonuses.

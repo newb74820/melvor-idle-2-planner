@@ -51,5 +51,7 @@
 - [x] Add Agility paths with technique progression, obstacle failure and restart estimates, and food and arena ticket budgets.
 - [x] Add Astrology constellations with XP and Knowledge targets, imported node progress, and telescope bonuses.
 - [x] Add a shared combat XP planner with all nine stances, simultaneous level goals, Hitpoints projections, and optional Prayer and Slayer.
+- [x] Add passive Farming plans with parallel plots, orchard regrowth, level and time goals, and bank-aware planting supplies.
+- [x] Add passive Ranching plans with enclosure capacity, parallel hourly production, maturity, replacements, and bank-aware feed.
 - [ ] Additional skills and action comparisons.
 - [ ] Progression plans, equipment comparison, and local persistence.

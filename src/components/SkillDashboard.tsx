@@ -3,8 +3,8 @@ import {
   Hammer, Heart, Leaf, PawPrint, Pickaxe, Shield, Skull, Sparkles, Sprout, Sword, Trees, WandSparkles,
   type LucideIcon,
 } from 'lucide-react';
-import { findSkillId, isCombatSkill, passiveSkills, skillGroups, skillProgress, type SkillId } from '../data/skills';
-import { skillCalculators } from '../data/skill-calculators';
+import { findSkillId, passiveSkills, skillGroups, skillProgress, type SkillId } from '../data/skills';
+import { hasSkillCalculator } from '../data/skill-calculators';
 import { woodcuttingActions } from '../data/woodcutting';
 import { resolveWoodcuttingRates } from '../data/woodcutting-modifiers';
 import type { DecodedSave } from '../schemas/save';
@@ -52,7 +52,7 @@ export default function SkillDashboard({ save, onImport, onSelect, refreshError 
           {skills.map((skill) => {
             const Icon = skillIcons[skill];
             const progress = skillProgress(save?.skills ?? [], skill);
-            const ready = isCombatSkill(skill) || Object.hasOwn(skillCalculators, skill);
+            const ready = hasSkillCalculator(skill);
             const activity = activeSkill === skill ? save?.activity.target : null;
 
             return <button

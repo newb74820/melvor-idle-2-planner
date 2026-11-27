@@ -86,6 +86,18 @@ Prayer estimates XP using average health damage per damaging hit across the kill
 
 For each goal, divide remaining XP by XP per kill or clear and round up to a whole number. The highest count sets the plan, and all skills gain XP over the same kills or clears. Timing uses a manually entered average that includes spawn waits. The planner keeps XP rates fixed and applies manually entered percentage bonuses. Timing and Prayer XP are estimates, and combat formulas have not been validated against paired release saves.
 
+## Farming
+
+Each assigned plot starts empty and grows concurrently. A planting yields its first harvest after its growth interval. For orchard trees, each later harvest uses the regrowth interval until all regrowths are spent. Only then does another growing cycle require another seed. The planner counts whole harvests within the chosen time or finds the earliest harvest time that meets the XP target across all plots. [Farming mechanics](https://melvoridle.wiki/melvor-idle-2/mechanics/farming)
+
+Elapsed time assumes prompt harvests and replanting. Crop inputs are compared against starting bank quantities without crediting crops produced later in the plan. Output uses fully protected base yields. Growth time and XP modifiers are optional manual inputs. Flower bonuses are listed separately because flowers have no harvest.
+
+## Ranching
+
+Enclosures produce concurrently at one-hour ticks. At fixed happiness, the planner multiplies each animal's base XP and products by its happiness and its age factor. The age factor is 0.5 for children and 1 for standard adults. Product quantities are combined by item before rounding down each hourly payout. New purchases grant base XP immediately. [Ranching mechanics](https://melvoridle.wiki/melvor-idle-2/mechanics/ranching)
+
+The first tick is assumed to occur one hour into the estimate. Maturity and expiry are applied before production at the same timestamp. Optional replacement buys a new child at expiry. Feed uses the base hourly rate and compares against starting stock without adjusting happiness when the plan reports a shortfall. The estimate assumes the selected enclosures are built and excludes repair and construction costs, variants other than the standard adult, breeding, and petting XP.
+
 ## Validation
 
 On November 26, 2026, all 22 planner rows matched the [build 26724394 recipe extract](https://db.melvor.aevv.net/entity/Woodcutting) for unlock level, XP per cut, base cut time, and primary yield after correcting the Oak and Redwood unlock levels. All 120 XP thresholds matched the [published XP table for the same build](https://melvor2.com/xp-table/). The planner keeps the full table for reference and caps level targets and XP-derived levels at 99, as specified in the [developer's Early Access announcement](https://news.melvoridle.com/melvor-idle-2-a-runescape-adventure-releases-17-november-2026-into-steam-early-access-next-fest-roundup/).

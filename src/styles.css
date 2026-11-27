@@ -218,6 +218,26 @@ h1 { margin-bottom: 4px; font-size: 24px; font-weight: 600; letter-spacing: 0; }
 .combat-table td { font-family: var(--mono); }
 .combat-sources { display: flex; flex-wrap: wrap; gap: 4px 12px; }
 .combat-sources a { color: var(--teal); }
+.farming-setup, .farming-crops, .ranching-setup { display: grid; align-content: start; gap: 12px; }
+.farming-setup .section-title-row, .farming-setup .target-mode, .ranching-setup .section-title-row, .ranching-setup .target-mode { margin-bottom: 0; }
+.farming-select, .ranching-select { display: block; }
+.farming-crops fieldset, .ranching-pen { min-width: 0; margin: 0; padding: 8px 10px; border: 1px solid var(--line); }
+.farming-crops legend, .ranching-pen legend { padding: 0 4px; color: var(--lime); font-size: 12px; }
+.farming-crop-fields { display: grid; grid-template-columns: minmax(0, 3fr) minmax(68px, 1fr); gap: 10px; }
+.farming-crops fieldset p:last-child { margin-bottom: 0; }
+.farming-add { justify-self: start; }
+.farming-flowers { margin: 0; padding-left: 16px; color: var(--soft); font-size: 11px; line-height: 1.7; }
+.farming-results p, .ranching-results p { margin: 0 0 8px; color: var(--soft); font-size: 12px; line-height: 1.5; }
+.farming-results .farming-warning, .ranching-results .ranching-warning { color: #d7a875; }
+.farming-results .primary-result p:last-child, .ranching-results .primary-result p:last-child { margin-bottom: 0; }
+:is(.farming-table, .ranching-table) { overflow-x: auto; margin: 14px 0; }
+:is(.farming-table, .ranching-table) table { width: 100%; border-collapse: collapse; font-size: 11px; white-space: nowrap; }
+:is(.farming-table, .ranching-table) :is(th, td) { padding: 8px; text-align: right; border-bottom: 1px solid var(--line); }
+:is(.farming-table, .ranching-table) thead th { color: var(--soft); font-weight: 500; }
+:is(.farming-table, .ranching-table) th:first-child { padding-left: 0; text-align: left; }
+:is(.farming-table, .ranching-table) td { font-family: var(--mono); }
+.ranching-cohort { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+.ranching-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .planner-note { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
 .planner-results .primary-result { display: grid; gap: 8px; }
 .planner-warning { margin: 0; color: var(--orange); font-size: 12px; }

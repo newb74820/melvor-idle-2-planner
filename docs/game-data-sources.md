@@ -47,6 +47,10 @@ Astrology uses 12 constellations and eight telescope upgrades from Steam build `
 
 The combat picker uses the 179 enemies referenced by 40 populated combat areas and 14 dungeons in the installed Steam build `26886380`. It uses the `Enemy`, `CombatArea`, and `Dungeon` records from the local `MelvorBase` package. Enemy HP is Hitpoints level multiplied by 10. Base Armour and MaximumWard come from the enemy's base stats and default to zero if absent. Dungeon data includes ordered enemy groups, repeat counts, and guaranteed completion items from fixed rewards and guaranteed one-item rolls. All dungeon enemy groups in this build have one possible enemy. [Public Golbin record](https://db.melvor.aevv.net/enemy/Golbin) · [Max Hitpoints formula](https://melvoridle.wiki/melvor-idle-2/mechanics/character)
 
+Farming uses `FarmingRecipe`, `FarmingCategory`, and `FarmingPlot` from the installed Steam build `26886380`. The catalog includes 43 harvestable recipes and six flowers, along with plot level requirements, base growth intervals, orchard regrowths, seeds and other ingredients, and base harvest yields. [Farming data reference](https://db.melvor.aevv.net/entity/Farming)
+
+Ranching uses the 20 animals, 53 enclosures, and 15 land slots from the installed Steam build `26886380`. The animal records provide purchase XP, gold, maturation and lifespan intervals, feed, and products. The child and standard adult variant records supply the 50% juvenile production and XP factors. [Ranching data reference](https://db.melvor.aevv.net/entity/Ranching)
+
 ## XP table reference
 
 The public [Melvor Idle 2 XP table](https://melvor2.com/xp-table/) identifies build `26724394` and says its table is from the game's own code. All thresholds for levels 1-120 are included in `src/data/xp-table.ts`; values are attributed to that community reference and have not been independently verified in-game.

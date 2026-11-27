@@ -5,6 +5,8 @@ import { version as plannerVersion } from '../package.json';
 import { calculateActionPlan, type CalculationResult, type SkillAction } from './calculator';
 import { AgilityModifierFields, AgilityObstacleSummary, AgilityTechniqueFields, startingAgilityXp, type AgilitySettings } from './components/AgilityFields';
 import CombatCalculator from './components/CombatCalculator';
+import FarmingCalculator from './components/FarmingCalculator';
+import RanchingCalculator from './components/RanchingCalculator';
 import { HuntingEquipment } from './components/HuntingEquipment';
 import SaveImportDialog from './components/SaveImportDialog';
 import SkillDashboard, { skillIcons } from './components/SkillDashboard';
@@ -16,7 +18,7 @@ import { resolveBeastcraftingStations } from './data/beastcrafting';
 import { calculateCookingPlan } from './data/cooking';
 import { bottlingsPerBrew, brewingSeconds } from './data/herblore';
 import { calculateHuntingPlan, selectedHuntingTrap, type HuntingSettings } from './data/hunting';
-import { expectedExtraProducts, skillCalculators, type CalculatorSkill } from './data/skill-calculators';
+import { expectedExtraProducts, hasSkillCalculator, skillCalculators, type CalculatorSkill } from './data/skill-calculators';
 import { baseStunSeconds, calculateThievingPlan, resolveThievingPerceptionDistractions, resolveThievingStealthEquipment } from './data/thieving';
 import { resolveWoodcuttingRates } from './data/woodcutting-modifiers';
 import { estimateWoodcuttingDrops } from './data/woodcutting-drops';
@@ -507,7 +509,7 @@ function App() {
                   if (skill) setSelectedSkill(skill);
                 }}>
                   {skillGroups.map(({ name, skills }) => <optgroup label={name} key={name}>
-                    {skills.map((skill) => <option key={skill} value={skill}>{skill}{hasCalculator(skill) || isCombatSkill(skill) ? '' : passiveSkills.has(skill) ? ' (passive)' : ' (planned)'}</option>)}
+                    {skills.map((skill) => <option key={skill} value={skill}>{skill}{hasSkillCalculator(skill) ? '' : passiveSkills.has(skill) ? ' (passive)' : ' (planned)'}</option>)}
                   </optgroup>)}
                 </select>
                 <ChevronDown size={16} aria-hidden="true" />
@@ -517,6 +519,9 @@ function App() {
           {refreshError && <p className="refresh-error" role="alert">{refreshError}</p>}
 
           {isCombatSkill(selectedSkill) ? <CombatCalculator skill={selectedSkill} save={importedSave} formatDuration={formatDuration} />
+          : selectedSkill === 'Farming' ? <FarmingCalculator savedXp={selectedProgress?.xp} inventory={planningInventory} formatDuration={formatDuration} />
+          : selectedSkill === 'Ranching' ? <RanchingCalculator savedXp={selectedProgress?.xp} inventory={planningInventory}
+            gold={importedSave?.wallet.GoldPieces} formatDuration={formatDuration} />
           : hasCalculator(selectedSkill) ? <>
           <section className="calculator-grid" aria-label={`${selectedSkill} calculator`}>
             <div className="input-panel">
