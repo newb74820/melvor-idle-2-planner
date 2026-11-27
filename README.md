@@ -56,6 +56,7 @@ To run the frontend tests, use `npm.cmd test`.
 - Beastcrafting covers 145 recipes with imported station bonuses, bank-aware ingredient costs, and Resource Planner support.
 - Agility covers 57 selectable paths with imported technique progress, per-obstacle success, bank-aware food and arena ticket budgets, and projected technique levels.
 - Astrology covers all 12 constellations with XP and Knowledge targets, imported node progress, and telescope bonuses.
+- The shared Combat calculator covers nine stances and all eight combat skills. Pick an enemy, enter custom stats, or select a dungeon to plan whole clears. Set goals for compatible skills to see their shared kills or clears and Hitpoints XP. Dungeon plans show the ordered fights and base completion items.
 - 22 Woodcutting actions referenced against the public Melvor2.com calculator for Early Access build `26724394`.
 - Deterministic action count, XP/hour, elapsed action time, and XP overshoot calculations.
 - Build-specific primary Woodcutting yields, zero input costs, and projected inventory totals using imported or manually entered quantities.

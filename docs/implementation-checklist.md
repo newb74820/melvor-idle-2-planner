@@ -50,5 +50,6 @@
 - [x] Add Beastcrafting recipes with shared artisan timing, imported station bonuses, and resource planning.
 - [x] Add Agility paths with technique progression, obstacle failure and restart estimates, and food and arena ticket budgets.
 - [x] Add Astrology constellations with XP and Knowledge targets, imported node progress, and telescope bonuses.
+- [x] Add a shared combat XP planner with all nine stances, simultaneous level goals, Hitpoints projections, and optional Prayer and Slayer.
 - [ ] Additional skills and action comparisons.
 - [ ] Progression plans, equipment comparison, and local persistence.

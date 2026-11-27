@@ -45,6 +45,8 @@ Agility uses the 57 paths referenced by the 38 courses in the installed Steam bu
 
 Astrology uses 12 constellations and eight telescope upgrades from Steam build `26886380`. The game data supplies observation XP, Knowledge, interval, requirements, and node thresholds. [Astrology constellation data](https://db.melvor.aevv.net/entity/Astrology) · [Dragon Telescope](https://db.melvor.aevv.net/shop-purchase/DragonTelescope)
 
+The combat picker uses the 179 enemies referenced by 40 populated combat areas and 14 dungeons in the installed Steam build `26886380`. It uses the `Enemy`, `CombatArea`, and `Dungeon` records from the local `MelvorBase` package. Enemy HP is Hitpoints level multiplied by 10. Base Armour and MaximumWard come from the enemy's base stats and default to zero if absent. Dungeon data includes ordered enemy groups, repeat counts, and guaranteed completion items from fixed rewards and guaranteed one-item rolls. All dungeon enemy groups in this build have one possible enemy. [Public Golbin record](https://db.melvor.aevv.net/enemy/Golbin) · [Max Hitpoints formula](https://melvoridle.wiki/melvor-idle-2/mechanics/character)
+
 ## XP table reference
 
 The public [Melvor Idle 2 XP table](https://melvor2.com/xp-table/) identifies build `26724394` and says its table is from the game's own code. All thresholds for levels 1-120 are included in `src/data/xp-table.ts`; values are attributed to that community reference and have not been independently verified in-game.

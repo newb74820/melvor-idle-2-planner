@@ -7,17 +7,22 @@ const nonCombat = [
   'Crafting', 'Runecrafting', 'Herblore', 'Thieving', 'Farming', 'Ranching', 'Hunting',
   'Beastcrafting', 'Agility', 'Astrology',
 ] as const;
-const combat = ['Attack', 'Strength', 'Defence', 'Hitpoints', 'Ranged', 'Magic', 'Prayer', 'Slayer'] as const;
+export const combatSkills = ['Attack', 'Strength', 'Defence', 'Hitpoints', 'Ranged', 'Magic', 'Prayer', 'Slayer'] as const;
 
-export type SkillId = typeof nonCombat[number] | typeof combat[number];
+export type CombatSkill = typeof combatSkills[number];
+export type SkillId = typeof nonCombat[number] | CombatSkill;
 
 export const skillGroups = [
   { name: 'Non-combat', skills: nonCombat },
-  { name: 'Combat', skills: combat },
+  { name: 'Combat', skills: combatSkills },
 ] as const;
 
-export const skillCatalog = [...nonCombat, ...combat];
+export const skillCatalog = [...nonCombat, ...combatSkills];
 export const passiveSkills: ReadonlySet<SkillId> = new Set(['Farming', 'Ranching']);
+
+export function isCombatSkill(skill: SkillId): skill is CombatSkill {
+  return combatSkills.some((id) => id === skill);
+}
 
 const normalize = (name: string) => name.split(':').at(-1)?.toLowerCase().replace(/[^a-z]/g, '');
 

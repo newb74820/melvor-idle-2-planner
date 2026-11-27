@@ -78,6 +78,14 @@ Each observation awards XP and Knowledge to the selected constellation. The calc
 
 Knowledge thresholds grant minor-node slots. Every four unlocked minor nodes grant one major-node slot. Projections hold the currently unlocked nodes fixed through the plan and exclude random sightings and temporary event effects.
 
+## Combat
+
+The planner estimates repeated kills of one enemy or full dungeon clears. It assumes the player deals the enemy's full health as stance damage and adds `4 × base armour + 50 × base ward` to the damage used for stance and Hitpoints XP. Each stance has its own XP split, and every stance awards 0.133 Hitpoints XP per point in that total. For dungeons the planner adds XP across the ordered lineup, including repeated enemies, and shows base completion items. [Early Access stance data](https://melvoridle2.th.gl/db/attacks) · [Combat XP mechanics](https://melvoridle.wiki/melvor-idle-2/mechanics/combat-experience) · [Dungeon mechanics](https://melvoridle.wiki/melvor-idle-2/mechanics/combat-areas)
+
+Prayer estimates XP using average health damage per damaging hit across the kill or clear and the total base cost of the active prayers. For single-enemy tasks, Slayer uses `enemy HP / 8 + 4` per eligible kill and assumes every planned kill counts toward a task. [Prayer XP](https://melvoridle2.th.gl/db/skill/legacyskillnavigationoption-legacyprayer) · [Slayer XP](https://melvoridle.wiki/melvor-idle-2/skills/slayer)
+
+For each goal, divide remaining XP by XP per kill or clear and round up to a whole number. The highest count sets the plan, and all skills gain XP over the same kills or clears. Timing uses a manually entered average that includes spawn waits. The planner keeps XP rates fixed and applies manually entered percentage bonuses. Timing and Prayer XP are estimates, and combat formulas have not been validated against paired release saves.
+
 ## Validation
 
 On November 26, 2026, all 22 planner rows matched the [build 26724394 recipe extract](https://db.melvor.aevv.net/entity/Woodcutting) for unlock level, XP per cut, base cut time, and primary yield after correcting the Oak and Redwood unlock levels. All 120 XP thresholds matched the [published XP table for the same build](https://melvor2.com/xp-table/). The planner keeps the full table for reference and caps level targets and XP-derived levels at 99, as specified in the [developer's Early Access announcement](https://news.melvoridle.com/melvor-idle-2-a-runescape-adventure-releases-17-november-2026-into-steam-early-access-next-fest-roundup/).

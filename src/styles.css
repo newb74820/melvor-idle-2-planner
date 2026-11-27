@@ -197,6 +197,27 @@ h1 { margin-bottom: 4px; font-size: 24px; font-weight: 600; letter-spacing: 0; }
 .planner-setup h2, .planner-results h2, .planner-checklist h2 { margin: 0; font-size: 16px; }
 .planner-toggle { display: flex; align-items: center; gap: 8px; font-size: 12px; }
 .planner-toggle input { accent-color: var(--lime); }
+.combat-inputs { display: grid; align-content: start; gap: 14px; }
+.combat-inputs .section-title-row { margin-bottom: 0; }
+.combat-select { display: block; }
+.combat-enemy-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 10px; border: 1px solid var(--line); }
+.combat-enemy-stats dt { color: var(--soft); font-size: 11px; }
+.combat-enemy-stats dd { margin: 4px 0 0; color: var(--text); font: 12px var(--mono); }
+.dungeon-lineup ol { display: grid; gap: 4px; margin: 0; padding: 0 0 0 22px; color: var(--soft); font-size: 12px; }
+.combat-goals { display: grid; gap: 12px; padding-top: 16px; border-top: 1px solid var(--line); }
+.combat-goals fieldset { min-width: 0; margin: 0; padding: 8px 10px; border: 1px solid var(--line); }
+.combat-goals legend { padding: 0 4px; color: var(--lime); font-size: 12px; }
+.combat-results p { margin: 0 0 8px; color: var(--soft); font-size: 12px; line-height: 1.5; }
+.combat-results .primary-result p:last-child { margin-bottom: 0; }
+.combat-results p[role=alert] { color: #d7a875; }
+.combat-table { overflow-x: auto; margin: 14px 0; }
+.combat-table table { width: 100%; border-collapse: collapse; font-size: 11px; white-space: nowrap; }
+.combat-table th, .combat-table td { padding: 8px; text-align: right; border-bottom: 1px solid var(--line); }
+.combat-table thead th { color: var(--soft); font-weight: 500; }
+.combat-table th:first-child { padding-left: 0; text-align: left; }
+.combat-table td { font-family: var(--mono); }
+.combat-sources { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.combat-sources a { color: var(--teal); }
 .planner-note { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
 .planner-results .primary-result { display: grid; gap: 8px; }
 .planner-warning { margin: 0; color: var(--orange); font-size: 12px; }

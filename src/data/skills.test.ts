@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { skillCalculators } from './skill-calculators';
-import { findSkillId, skillProgress } from './skills';
+import { findSkillId, isCombatSkill, skillProgress } from './skills';
 import { xpAtLevel } from './xp-table';
 
 describe('skill progress', () => {
@@ -12,8 +11,8 @@ describe('skill progress', () => {
     });
   });
 
-  it('shows a saved level and XP even when a calculator is planned', () => {
-    expect(Object.hasOwn(skillCalculators, 'Attack')).toBe(false);
+  it('shows the saved level and XP for a combat skill', () => {
+    expect(isCombatSkill('Attack')).toBe(true);
     expect(skillProgress([{ name: 'Attack', level: 2, xp: 174 }], 'Attack')).toEqual({
       level: 2, xp: 174, progressPercent: 100, xpToNext: 0,
     });

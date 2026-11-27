@@ -4,6 +4,7 @@ import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { version as plannerVersion } from '../package.json';
 import { calculateActionPlan, type CalculationResult, type SkillAction } from './calculator';
 import { AgilityModifierFields, AgilityObstacleSummary, AgilityTechniqueFields, startingAgilityXp, type AgilitySettings } from './components/AgilityFields';
+import CombatCalculator from './components/CombatCalculator';
 import { HuntingEquipment } from './components/HuntingEquipment';
 import SaveImportDialog from './components/SaveImportDialog';
 import SkillDashboard, { skillIcons } from './components/SkillDashboard';
@@ -22,7 +23,7 @@ import { estimateWoodcuttingDrops } from './data/woodcutting-drops';
 import { equippedWoodcuttingPotion, estimateOvergrowth } from './data/woodcutting-temporary';
 import { woodcuttingMasterySource } from './data/woodcutting-mastery';
 import { mergePlanningInventory } from './resource-planner';
-import { findSkillId, passiveSkills, skillGroups, skillProgress, type SkillId } from './data/skills';
+import { findSkillId, isCombatSkill, passiveSkills, skillGroups, skillProgress, type SkillId } from './data/skills';
 import { levelForXp, xpAtLevel, xpAtLevelTable, xpTableSource } from './data/xp-table';
 import type { DecodedSave, LoadedSave, SaveDirectoryPreference } from './schemas/save';
 
@@ -506,7 +507,7 @@ function App() {
                   if (skill) setSelectedSkill(skill);
                 }}>
                   {skillGroups.map(({ name, skills }) => <optgroup label={name} key={name}>
-                    {skills.map((skill) => <option key={skill} value={skill}>{skill}{hasCalculator(skill) ? '' : passiveSkills.has(skill) ? ' (passive)' : ' (planned)'}</option>)}
+                    {skills.map((skill) => <option key={skill} value={skill}>{skill}{hasCalculator(skill) || isCombatSkill(skill) ? '' : passiveSkills.has(skill) ? ' (passive)' : ' (planned)'}</option>)}
                   </optgroup>)}
                 </select>
                 <ChevronDown size={16} aria-hidden="true" />
@@ -515,7 +516,8 @@ function App() {
           </section>
           {refreshError && <p className="refresh-error" role="alert">{refreshError}</p>}
 
-          {hasCalculator(selectedSkill) ? <>
+          {isCombatSkill(selectedSkill) ? <CombatCalculator skill={selectedSkill} save={importedSave} formatDuration={formatDuration} />
+          : hasCalculator(selectedSkill) ? <>
           <section className="calculator-grid" aria-label={`${selectedSkill} calculator`}>
             <div className="input-panel">
               <div className="section-title-row">
